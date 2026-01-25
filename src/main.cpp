@@ -16,7 +16,7 @@ static double normalizeangle(double angle)
   return angle;
 }
 
-const int Button_pin = 1;
+const int Button_pin = 2;
 
 void setup()
 {
