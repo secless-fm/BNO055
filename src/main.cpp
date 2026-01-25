@@ -86,7 +86,6 @@ void loop()
   prevButton = nowButton;
   
   /* リセット時の角度を基準としたbnoの角度=(bno本体の角度-リセット時の角度+360)を360で割った余り */
-  /*
   yaw = fmod((yaw - val + 360.0),360.0);
 
 
@@ -104,6 +103,5 @@ void loop()
 
   Serial.print(" Roll : ");
   Serial.println(normalizeangle(roll));
-  */
   delay(100);
 }
