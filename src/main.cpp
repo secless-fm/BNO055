@@ -16,12 +16,12 @@ static double normalizeangle(double angle)
   return angle;
 }
 
-const int Button_pin = 2;
+const int Button_pin = 1;
 
 void setup()
 {
   Serial.begin(9600);
-  pinMode(Button_pin, INPUT_PULLUP);
+  pinMode(Button_pin, INPUT_PULLDOWN);
   while (!Serial)
     ;
   Serial.print("BNO055 start   ");
@@ -39,50 +39,20 @@ void setup()
   Serial.print("bno ready");
 }
 
-bool prevButton = HIGH;
-
 void loop()
 {
-  /*
-  // キャリブレーション
-  uint8_t sys, gyro, accel, mag;
-  bno.getCalibration(&sys, &gyro, &accel, &mag);
-
-
-  Serial.print("CALIB : ");
-  Serial.print("sys : ");
-  Serial.print(sys);
-  Serial.print(" gyro : ");
-  Serial.print(gyro);
-  Serial.print(" accel : ");
-  Serial.print(accel);
-  Serial.print(" mag : ");
-  Serial.print(mag);
-
-  if(sys < 3 || gyro < 3 || accel < 3 || mag < 3)
-  {
-    Serial.println(" Colabrationing...");
-    return;
-  }
-  */
-
   imu::Vector<3> euler = bno.getVector(Adafruit_BNO055::VECTOR_EULER);
 
   double yaw   = euler.x();
   bool nowButton = digitalRead(Button_pin);
+  static bool prevButton = LOW;
 
-  if(prevButton == HIGH && nowButton == LOW)
+  if(prevButton == LOW && nowButton == HIGH)
   {
-    Serial.println(1);
-    // Serial.println(" Reset ");
-    // val = yaw; // 現在の角度(Yaw)を保存
+    Serial.println(" Reset ");
+    val = yaw; // 現在の角度(Yaw)を保存
   }
-  if(prevButton == HIGH && nowButton == HIGH)
-  {
-    Serial.println(0);
-  }
-  
-
+  Serial.print(" ");
   prevButton = nowButton;
   
   /* リセット時の角度を基準としたbnoの角度=(bno本体の角度-リセット時の角度+360)を360で割った余り */
