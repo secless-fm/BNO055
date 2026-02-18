@@ -6,10 +6,10 @@
 
 Adafruit_BNO055 bno = Adafruit_BNO055(55, 0x29);
 
-static double val = 0;
+static float val = 0;
 
 
-static double normalizeangle(double angle)
+static float normalizeangle(float angle)
 {
   while (angle < -180.0) angle += 360.0;
   while (angle > 180.0) angle -= 360.0;
@@ -35,7 +35,7 @@ void setup()
 
   delay(1000);
 
-  // bno.setExtCrystalUse(true);
+  bno.setExtCrystalUse(true);
   Serial.print("bno ready");
 }
 
@@ -43,7 +43,7 @@ void loop()
 {
   imu::Vector<3> euler = bno.getVector(Adafruit_BNO055::VECTOR_EULER);
 
-  double yaw   = euler.x();
+  float yaw   = euler.x();
   bool nowButton = digitalRead(Button_pin);
   static bool prevButton = LOW;
 
@@ -59,8 +59,8 @@ void loop()
   yaw = fmod((yaw - val + 360.0),360.0);
 
 
-  double pitch = euler.y();
-  double roll  = euler.z();
+  float pitch = euler.y();
+  float roll  = euler.z();
 
   Serial.print(" reset val : ");
   Serial.print(val);
