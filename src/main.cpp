@@ -73,5 +73,5 @@ void loop()
 
   Serial.print(" Roll : ");
   Serial.println(normalizeangle(roll));
-  delay(100);
+  delay(10);
 }
