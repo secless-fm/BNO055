@@ -7,7 +7,7 @@
 Adafruit_BNO055 bno = Adafruit_BNO055(55, 0x29);
 
 static float val = 0;
-const int gyro_pin = 0;
+const int DAC_PIN = 0;
 
 /*
 static float normalizeangle(float angle)
@@ -25,8 +25,6 @@ void setup()
 {
   Serial.begin(115200);
   pinMode(Button_pin, INPUT_PULLDOWN);
-  while (!Serial)
-    ;
   Serial.print("BNO055 start   ");
 
   if (!bno.begin())
@@ -43,6 +41,7 @@ void setup()
   bno.setExtCrystalUse(true);
   Serial.print("bno ready");
 
+  pinMode(DAC_PIN,OUTPUT);
   analogWriteResolution(10); // 2^10=1024
 }
 
@@ -91,7 +90,7 @@ void loop()
   Serial.println(robotAngle);
 
   if (BNO_start){
-      analogWrite(gyro_pin, robotAngle); // gyro_pinに値を送る。
+      analogWrite(DAC_PIN, robotAngle); // gyro_pinに値を送る。
   }else{
       Serial.print("BNOが起動してないのかもです!（妹）");
   }
