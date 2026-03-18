@@ -1,4 +1,4 @@
-#include <Arduino.h>
+#include "option.hpp"
 
 float _normalizeAngle(float angle){
     while (angle < 180.0) angle -= 360.0;

@@ -4,13 +4,12 @@
 #include <Adafruit_BNO055.h>
 #include <utility/imumaths.h>
 
-#include "function.hpp"
+#include "option.hpp"
 
 Adafruit_BNO055 bno = Adafruit_BNO055(55, 0x29);
 
-static float val = 0;
+static float nowVal = 0;
 const int DAC_PIN = A0;
-
 
 const int Button_pin = 1;
 bool BNO_start = false;
@@ -20,7 +19,7 @@ void setup()
   Serial.begin(115200);
   pinMode(Button_pin, INPUT_PULLDOWN);
 
-  Serial_start();
+  // Serial_start();
 
   Serial.print("BNO055 start   ");
 
@@ -38,7 +37,6 @@ void setup()
   bno.setExtCrystalUse(true);
   Serial.print("bno ready");
 
-  pinMode(DAC_PIN,OUTPUT);
   analogWriteResolution(10); // 2^10=1024
 }
 
@@ -53,13 +51,13 @@ void loop()
   if(prevButton == LOW && nowButton == HIGH)
   {
     Serial.println(" Reset ");
-    val = yaw; // 現在の角度(Yaw)を保存
+    nowVal = yaw; // 現在の角度(Yaw)を保存
   }
   Serial.print(" ");
   prevButton = nowButton;
   
   /* リセット時の角度を基準としたbnoの角度=(bno本体の角度-リセット時の角度+360)を360で割った余り */
-  yaw = fmod((yaw - val + 360.0),360.0);
+  yaw = fmod((yaw - nowVal + 360.0),360.0);
 
   int robotAngle = yaw * 1023 / 360; // 角度：0 ~ 360 -> 0 ~ 1023 -> 0v ~ 3.3v
 
@@ -68,7 +66,7 @@ void loop()
   float roll  = euler.z();
 
   Serial.print(" reset val : ");
-  Serial.print(val);
+  Serial.print(nowVal);
 
   Serial.print(" Yaw : ");
   Serial.print((yaw));
