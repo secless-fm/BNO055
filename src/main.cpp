@@ -4,19 +4,13 @@
 #include <Adafruit_BNO055.h>
 #include <utility/imumaths.h>
 
+#include "function.hpp"
+
 Adafruit_BNO055 bno = Adafruit_BNO055(55, 0x29);
 
 static float val = 0;
-const int DAC_PIN = 0;
+const int DAC_PIN = A0;
 
-/*
-static float normalizeangle(float angle)
-{
-  while (angle < -180.0) angle += 360.0;
-  while (angle > 180.0) angle -= 360.0;
-  return angle;
-}
-*/
 
 const int Button_pin = 1;
 bool BNO_start = false;
@@ -25,6 +19,9 @@ void setup()
 {
   Serial.begin(115200);
   pinMode(Button_pin, INPUT_PULLDOWN);
+
+  Serial_start();
+
   Serial.print("BNO055 start   ");
 
   if (!bno.begin())
@@ -64,13 +61,11 @@ void loop()
   /* リセット時の角度を基準としたbnoの角度=(bno本体の角度-リセット時の角度+360)を360で割った余り */
   yaw = fmod((yaw - val + 360.0),360.0);
 
-  int robotAngle = (yaw / 360.0) * 1024; // 角度：0 ~ 360 -> 0 ~ 1023 -> 0v ~ 3.3v
+  int robotAngle = yaw * 1023 / 360; // 角度：0 ~ 360 -> 0 ~ 1023 -> 0v ~ 3.3v
 
 
-  /*
   float pitch = euler.y();
   float roll  = euler.z();
-  */
 
   Serial.print(" reset val : ");
   Serial.print(val);
@@ -78,22 +73,16 @@ void loop()
   Serial.print(" Yaw : ");
   Serial.print((yaw));
 
-  /*
   Serial.print(" Pitch : ");
   Serial.print((pitch));
 
   Serial.print(" Roll : ");
   Serial.print((roll));
-  */
 
   Serial.print(" manman ");
   Serial.println(robotAngle);
 
-  if (BNO_start){
-      analogWrite(DAC_PIN, robotAngle); // gyro_pinに値を送る。
-  }else{
-      Serial.print("BNOが起動してないのかもです!（妹）");
-  }
+  analogWrite(DAC_PIN, robotAngle); // DAC_pinに値を送る。
 
   delay(10);
 }
